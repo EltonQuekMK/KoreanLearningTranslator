@@ -2,6 +2,8 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
+  // Base path for GitHub Pages (project site). Adjust to your repo name.
+  base: '/KoreanLearningTranslator/',
   plugins: [react()],
   server: {
     proxy: {
