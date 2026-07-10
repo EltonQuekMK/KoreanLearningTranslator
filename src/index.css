@@ -94,6 +94,7 @@ h3 {
 
 .search-bar input {
   flex: 1;
+  min-width: 0;
   border: 0;
   outline: none;
   background: transparent;
@@ -106,10 +107,26 @@ h3 {
   padding: 8px 14px;
   color: white;
   background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+  .search-bar {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .search-bar input{
+    width: 100%;
+  }
+
+  .search-bar button {
+    margin-top: 4px;
+  }
 }
 
 .search-icon {
-  font-size: 1.1rem;
+  font-size: 2rem;
   color: #64748b;
 }
 
@@ -219,39 +236,39 @@ h3 {
   color: #b45309;
   /* orange-ish */
   font-weight: 600;
+}
 
-  .bracket {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 8px;
-    color: #334155;
+.bracket {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+  color: #334155;
+}
+
+.bracket-piece {
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: #f1f5f9;
+}
+
+.empty-state {
+  text-align: center;
+  color: #334155;
+}
+
+@media (max-width: 720px) {
+  .app-shell {
+    padding: 14px;
   }
 
-  .bracket-piece {
-    border-radius: 999px;
-    padding: 6px 10px;
-    background: #f1f5f9;
+  .hero,
+  .result-card {
+    padding: 18px;
   }
 
-  .empty-state {
-    text-align: center;
-    color: #334155;
-  }
-
-  @media (max-width: 720px) {
-    .app-shell {
-      padding: 14px;
-    }
-
-    .hero,
-    .result-card {
-      padding: 18px;
-    }
-
-    .result-header {
-      flex-direction: column;
-      align-items: flex-start;
-    }
+  .result-header {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
