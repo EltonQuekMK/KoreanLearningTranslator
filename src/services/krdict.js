@@ -1,7 +1,12 @@
 const API_BASE = '/krdict';
 
 function cleanText(value) {
-  return value ? value.replace(/\s+/g, ' ').trim() : '';
+  if (!value) return '';
+
+  return value
+    .replace(/\s+/g, ' ')
+    .replace(/[^\p{L}\p{N}\s]/gu, '')
+    .trim();
 }
 
 function getFirstText(node, selectors) {

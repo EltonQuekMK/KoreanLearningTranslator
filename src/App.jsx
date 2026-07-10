@@ -15,7 +15,6 @@ function App() {
     const [activeQuery, setActiveQuery] = useState('안녕하세요');
     const [result, setResult] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [statusMessage, setStatusMessage] = useState('');
     const [speaking, setSpeaking] = useState(false);
     const [voices, setVoices] = useState([]);
 
@@ -24,18 +23,15 @@ function App() {
         console.log(`Searching for: ${activeQuery}`);
         async function loadResult() {
             setIsLoading(true);
-            setStatusMessage('');
             try {
                 const liveResult = await searchKoreanDictionary(activeQuery);
                 if (!ignore) {
                     setResult(liveResult);
-                    setStatusMessage(liveResult ? 'Live dictionary lookup succeeded.' : 'No dictionary result found for this term.');
                     console.log(`Lookup result for "${activeQuery}":`, liveResult);
                 }
             } catch (error) {
                 if (!ignore) {
                     setResult(null);
-                    setStatusMessage('Live lookup unavailable. Please try again later.');
                     console.error(`Lookup failed for "${activeQuery}":`, error);
                 }
             } finally {
@@ -66,14 +62,15 @@ function App() {
         if (!text || typeof window === 'undefined' || !window.speechSynthesis) return;
         try {
             window.speechSynthesis.cancel();
-            const u = new SpeechSynthesisUtterance(text);
-            u.lang = 'ko-KR';
-            console.log(voices);
+            const speech = new SpeechSynthesisUtterance(text);
+            speech.lang = 'ko-KR';
             const koVoice = voices.find((v) => v.voiceURI && v.voiceURI == "Google 한국의");
-            if (koVoice) u.voice = koVoice;
-            u.onend = () => setSpeaking(false);
-            u.onerror = () => setSpeaking(false);
-            window.speechSynthesis.speak(u);
+            if (koVoice) speech.voice = koVoice;
+            speech.rate = 0.8;
+            speech.pitch = 0.9;
+            speech.onend = () => setSpeaking(false);
+            speech.onerror = () => setSpeaking(false);
+            window.speechSynthesis.speak(speech);
             setSpeaking(true);
         } catch (e) {
             // ignore
@@ -149,8 +146,6 @@ function App() {
                             </div>
 
                         </div>
-
-                        {/* {statusMessage ? <p className="status-message">{statusMessage}</p> : null} */}
 
                         <div className="panel">
                             <h3>Meaning breakdown</h3>
