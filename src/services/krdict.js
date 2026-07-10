@@ -376,7 +376,7 @@ async function translateText(text, baseUrl) {
   return extractTranslationText(data);
 }
 
-export async function searchLibreTranslate(query, baseUrl = import.meta.env.VITE_LIBRETRANSLATE_URL || 'https://translate.googleapis.com/translate_a/single') {
+export async function searchTranslation(query, baseUrl = 'https://translate.googleapis.com/translate_a/single') {
   const trimmed = query?.trim();
   if (!trimmed) return null;
 
@@ -409,5 +409,5 @@ export async function searchKoreanDictionary(query, apiKey = import.meta.env.VIT
   const trimmed = query?.trim();
   if (!trimmed) return null;
 
-  return searchLibreTranslate(trimmed);
+  return searchTranslation(trimmed);
 }

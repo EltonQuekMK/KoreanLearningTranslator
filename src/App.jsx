@@ -16,6 +16,8 @@ function App() {
     const [result, setResult] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [statusMessage, setStatusMessage] = useState('');
+    const [speaking, setSpeaking] = useState(false);
+    const [voices, setVoices] = useState([]);
 
     useEffect(() => {
         let ignore = false;
@@ -50,6 +52,39 @@ function App() {
             console.log(`Cancelled lookup for "${activeQuery}"`);
         };
     }, [activeQuery]);
+
+    // Load available speech synthesis voices (client-side only)
+    useEffect(() => {
+        if (typeof window === 'undefined' || !window.speechSynthesis) return undefined;
+        const loadVoices = () => setVoices(window.speechSynthesis.getVoices() || []);
+        loadVoices();
+        window.speechSynthesis.addEventListener('voiceschanged', loadVoices);
+        return () => window.speechSynthesis.removeEventListener('voiceschanged', loadVoices);
+    }, []);
+
+    function speakKorean(text) {
+        if (!text || typeof window === 'undefined' || !window.speechSynthesis) return;
+        try {
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'ko-KR';
+            console.log(voices);
+            const koVoice = voices.find((v) => v.voiceURI && v.voiceURI == "Google 한국의");
+            if (koVoice) u.voice = koVoice;
+            u.onend = () => setSpeaking(false);
+            u.onerror = () => setSpeaking(false);
+            window.speechSynthesis.speak(u);
+            setSpeaking(true);
+        } catch (e) {
+            // ignore
+        }
+    }
+
+    function stopSpeech() {
+        if (typeof window === 'undefined' || !window.speechSynthesis) return;
+        window.speechSynthesis.cancel();
+        setSpeaking(false);
+    }
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -96,11 +131,23 @@ function App() {
                         <div className="result-header">
                             <div>
                                 <p className="eyeliner">Result</p>
-                                <h2>{result.korean}</h2>
+                                <div className="title-row">
+                                    <h2>{result.korean}</h2>
+                                    <button
+                                        type="button"
+                                        className="speech-button"
+                                        onClick={() => (speaking ? stopSpeech() : speakKorean(result.korean))}
+                                        aria-pressed={speaking}
+                                        aria-label={speaking ? 'Stop speech' : 'Speak Korean'}
+                                        title={speaking ? 'Stop speech' : 'Speak Korean'}
+                                    >
+                                        {speaking ? '⏹' : '▶'}
+                                    </button>
+                                </div>
                                 <div className="pill">{result.romanization || '—'}</div>
                                 <p className="english-meaning">{result.english}</p>
                             </div>
-                            
+
                         </div>
 
                         {/* {statusMessage ? <p className="status-message">{statusMessage}</p> : null} */}
